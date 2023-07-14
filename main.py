@@ -33,7 +33,7 @@ def run(data_path: str, model_path: str):
         pass
 
     if extension in [".png", ".jpeg", ".jpg"]:
-        inference_on_image(model)
+        inference_on_image(model, data_path)
 
 
 def main(conf):
