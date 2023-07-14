@@ -39,7 +39,7 @@ def run(data_path: str, model_path: str):
 def main(conf):
     data_path = conf["data_path"]
     model_path = conf["model_path"]
-    run(data_path)
+    run(data_path, model_path)
 
 
 if __name__ == "__main__":
