@@ -17,8 +17,8 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
             for xyxy in detections.xyxy:
                 cropped_image = sv.crop(image=image, xyxy=xyxy)
-                # preprocessed_image = preprocess_image(cropped_image)
-                sink.save_image(image=cropped_image)
+                preprocessed_image = preprocess_image(cropped_image)
+                sink.save_image(image=preprocessed_image)
 
     if type_detection.lower() == "character":
         result_path = os.path.join(os.getcwd(), "characters")

@@ -45,7 +45,7 @@ def find_line_angle(line):
 
 
 def rotate_image(plate_img_gr, angle):
-    h, w = plate_img_gr.shape
+    h, w, _ = plate_img_gr.shape
     cX, cY = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D((cX, cY), angle, 1.0)
     rotated = cv2.warpAffine(plate_img_gr, M, (w, h))
@@ -53,9 +53,7 @@ def rotate_image(plate_img_gr, angle):
 
 
 def adjust_cropping(rotated_img):
-    print("...here...")
-    print(f"{rotated_img.shape = }")
-    h, w = rotated_img.shape
+    h, w, _ = rotated_img.shape
     targ_h = int(w / 4)
     crop_h = int((h - targ_h) / 2)
     cropped_rotated_img = rotated_img[crop_h : h - crop_h, :]
