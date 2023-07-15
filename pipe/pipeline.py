@@ -97,12 +97,24 @@ def ocr_on_video(model_character, frame):
 
     detections = filter(detections, mask)
 
+    characters = []
     for idx, (bbox, _, confidence, class_id, _) in enumerate(detections):
         center_x, center_y = calculate_bbox_center(bbox)
-
+        characters.append(
+            [
+                center_x,
+                center_y,
+                class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
+            ]
+        )
         print(
             f"#{idx}: {(center_x, center_y)} - {confidence:0.2f} - {class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id]}"
         )
+
+    characters.sort(key=lambda x: x[0])
+
+    for idx, (x, y, class_id) in enumerate(characters):
+        print(f"#{idx}: {(x, y)} - {class_id}")
 
     raise NotImplementedError
 
