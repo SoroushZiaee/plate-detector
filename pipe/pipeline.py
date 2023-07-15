@@ -1,9 +1,10 @@
 import supervision as sv
-from supervision.video.dataclasses import VideoInfo
-from supervision.video.source import get_video_frames_generator
 
-from yolox.tracker.byte_tracker import BYTETracker
-from supervision.video.sink import VideoSink
+# from supervision.video.dataclasses import VideoInfo
+# from supervision.video.source import get_video_frames_generator
+
+# from yolox.tracker.byte_tracker import BYTETracker
+# from supervision.video.sink import VideoSink
 
 
 import os
