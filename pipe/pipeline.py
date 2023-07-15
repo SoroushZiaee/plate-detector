@@ -89,6 +89,7 @@ def ocr_on_video(model_character, frame):
 
 
 def inference_on_video(model_plate, model_character, data_path):
+    conf_thresh = 0.65
     byte_tracker = BYTETracker(BYTETrackerArgs())
     video_info = sv.VideoInfo.from_video_path(data_path)
     print("\nvideo Info : ", end="")
@@ -132,6 +133,13 @@ def inference_on_video(model_plate, model_character, data_path):
 
             mask = np.array(
                 [tracker_id is not None for tracker_id in detections.tracker_id],
+                dtype=bool,
+            )
+
+            detections = filter(detections, mask)
+
+            mask = np.array(
+                [confidence > conf_thresh for confidence in detections.confidence],
                 dtype=bool,
             )
 
