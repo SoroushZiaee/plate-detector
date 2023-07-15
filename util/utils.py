@@ -187,19 +187,17 @@ def extract_plate_character(detections):
         int(value): key for key, value in ALPHABET_IDX_MAPPING.items()
     }
 
-    characters = []
-    for idx, (bbox, _, confidence, class_id, _) in enumerate(detections):
-        center_x, center_y = calculate_bbox_center(bbox)
-        characters.append(
-            [
-                center_x,
-                center_y,
-                class_id
-                if class_id < 10
-                else ENG_TO_PER[IDX_ALPHABET_MAPPING[class_id]],
-            ]
-        )
+    characters = [
+        [
+            *calculate_bbox_center(bbox),
+            class_id if class_id < 10 else ENG_TO_PER[IDX_ALPHABET_MAPPING[class_id]],
+        ]
+        for bbox, _, _, class_id, _ in detections
+    ]
 
     return " ".join(
-        list(map(sorted(characters, key=lambda x: x[0], reverse=False), str))
+        map(
+            str,
+            map(lambda x: x[2], sorted(characters, key=lambda x: x[0], reverse=False)),
+        )
     )
