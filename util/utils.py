@@ -60,13 +60,32 @@ def adjust_cropping(rotated_img):
     return cropped_rotated_img
 
 
+def pad_image(image, height=500, width=500):
+    original_height, original_width = image.shape[:2]
+
+    pad_height = max(height - original_height, 0)
+    pad_width = max(width - original_width, 0)
+
+    top_pad = pad_height // 2
+    bottom_pad = pad_height - top_pad
+    left_pad = pad_width // 2
+    right_pad = pad_width - left_pad
+
+    padded_image = cv2.copyMakeBorder(
+        image, top_pad, bottom_pad, left_pad, right_pad, cv2.BORDER_CONSTANT
+    )
+
+    return padded_image
+
+
 def preprocess_image(plate_img_gr):
     linessorted = find_longest_line(plate_img_gr)
     rot_angle = find_line_angle(linessorted[-1])
     rotated_img = rotate_image(plate_img_gr, rot_angle)
     cropped_rotated_img = adjust_cropping(rotated_img)
+    padded_image = pad_image(cropped_rotated_img)
 
-    return cropped_rotated_img
+    return padded_image
 
 
 def filter(detection, mask: np.ndarray):
