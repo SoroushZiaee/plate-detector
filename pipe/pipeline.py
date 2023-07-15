@@ -92,7 +92,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
             annotated_frame = box_annotator.annotate(scene=image, detections=detections)
             sink.save_image(image=annotated_frame)
-            with open(os.path.join(result_path, "sample.txt")) as fout:
+            with open(os.path.join(result_path, "sample.txt"), "w") as fout:
                 fout.write(plate_number)
 
 
