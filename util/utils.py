@@ -53,6 +53,7 @@ def rotate_image(plate_img_gr, angle):
 
 
 def adjust_cropping(rotated_img):
+    print(f"{rotated_img.shape = }")
     h, w = rotated_img.shape
     targ_h = int(w / 4)
     crop_h = int((h - targ_h) / 2)
