@@ -140,6 +140,8 @@ def match_detections_with_tracks(
 
 
 # calculate car center by finding center of bbox
-def calculate_car_center(bbox):
+def calculate_bbox_center(bbox):
     x1, y1, x2, y2 = bbox
-    return ((x1 + x2) // 2, (y1 + y2) // 2)
+    center_x = (x1 + x2) / 2
+    center_y = (y1 + y2) / 2
+    return center_x, center_y

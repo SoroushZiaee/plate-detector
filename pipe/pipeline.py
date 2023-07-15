@@ -19,7 +19,7 @@ from util.utils import (
     filter,
     detections2boxes,
     match_detections_with_tracks,
-    calculate_car_center,
+    calculate_bbox_center,
 )
 
 ALPHABET_IDX_MAPPING = {
@@ -98,7 +98,7 @@ def ocr_on_video(model_character, frame):
     detections = filter(detections, mask)
 
     for idx, (bbox, _, confidence, class_id, _) in enumerate(detections):
-        center_x, center_y = calculate_car_center(bbox)
+        center_x, center_y = calculate_bbox_center(bbox)
 
         print(
             f"#{idx}: {(center_x, center_y)} - {confidence:0.2f} - {class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id]}"
