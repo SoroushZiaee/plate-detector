@@ -19,27 +19,35 @@ def parse_args():
         "--model_path",
         type=str,
         default="/Users/soroush/Documents/Code/freelance-project/human-car-detection/car-plate-detection/model/ckpt/best.pt",
-        help="data path",
+        help="model path",
+    )
+
+    parser.add_argument(
+        "--type_detection",
+        type=str,
+        default="plate",
+        help="type detection",
     )
 
     return parser.parse_args()
 
 
-def run(data_path: str, model_path: str):
+def run(data_path: str, model_path: str, type_detection: str):
     filename, extension = os.path.splitext(data_path)
-    model = load_model(model_path)
+    model = load_model(model_path, type_detection)
 
     if extension in [".mp4"]:
         pass
 
     if extension in [".png", ".jpeg", ".jpg"]:
-        inference_on_image(model, data_path)
+        inference_on_image(model, data_path, type_detection)
 
 
 def main(conf):
     data_path = conf["data_path"]
     model_path = conf["model_path"]
-    run(data_path, model_path)
+    type_detection = conf["type_detection"]
+    run(data_path, model_path, type_detection)
 
 
 if __name__ == "__main__":
