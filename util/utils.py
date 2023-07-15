@@ -67,3 +67,21 @@ def preprocess_image(plate_img_gr):
     cropped_rotated_img = adjust_cropping(rotated_img)
 
     return cropped_rotated_img
+
+
+def filter(detection, mask: np.ndarray):
+    """
+    Filter the detections by applying a mask
+
+    :param mask: np.ndarray : A mask of shape (n,) containing a boolean value for each detection indicating if it should be included in the filtered detections
+    :param inplace: bool : If True, the original data will be modified and self will be returned.
+    :return: Optional[np.ndarray] : A new instance of Detections with the filtered detections, if inplace is set to False. None otherwise.
+    """
+    detection.xyxy = detection.xyxy[mask]
+    detection.confidence = detection.confidence[mask]
+    detection.class_id = detection.class_id[mask]
+    detection.tracker_id = (
+        detection.tracker_id[mask] if detection.tracker_id is not None else None
+    )
+
+    return detection

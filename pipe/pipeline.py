@@ -12,7 +12,7 @@ import cv2
 import numpy as np
 from dataclasses import dataclass
 
-from util.utils import preprocess_image
+from util.utils import preprocess_image, filter
 
 
 def inference_on_image(model, data_path: str, type_detection: str = "plate"):
@@ -40,7 +40,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
             [class_id != 24 for class_id in detections.class_id], dtype=bool
         )  # Remove plate detection
 
-        detections.filter(mask=mask, inplace=True)
+        detections = filter(detections, mask)
 
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
