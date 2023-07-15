@@ -112,6 +112,9 @@ def inference_on_video(model, data_path):
 
             detections = filter(detections, mask)
 
+            for item in detections:
+                print(f"{len(item) = }")
+
             labels = [
                 f"#{tracker_id} {confidence:0.2f}"
                 for _, confidence, class_id, tracker_id in detections
