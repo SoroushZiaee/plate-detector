@@ -125,7 +125,7 @@ def inference_on_video(model, data_path):
             ]
 
             frame = box_annotator.annotate(
-                frame=frame, detections=detections, labels=labels
+                scene=frame, detections=detections, labels=labels
             )
 
             sink.write_frame(frame)
