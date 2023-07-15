@@ -1,18 +1,25 @@
 import supervision as sv
+from supervision.draw.color import ColorPalette
 
-# from supervision.video.dataclasses import VideoInfo
 # from supervision.video.source import get_video_frames_generator
 
-# from yolox.tracker.byte_tracker import BYTETracker
+from yolox.tracker.byte_tracker import BYTETracker
+
 # from supervision.video.sink import VideoSink
 
 
 import os
 import cv2
 import numpy as np
+from tqdm import tqdm
 from dataclasses import dataclass
 
-from util.utils import preprocess_image, filter
+from util.utils import (
+    preprocess_image,
+    filter,
+    detections2boxes,
+    match_detections_with_tracks,
+)
 
 
 def inference_on_image(model, data_path: str, type_detection: str = "plate"):
@@ -61,10 +68,61 @@ class BYTETrackerArgs:
 
 def inference_on_video(model, data_path):
     byte_tracker = BYTETracker(BYTETrackerArgs())
-    video_info = VideoInfo.from_video_path(data_path)
+    video_info = sv.VideoInfo.from_video_path(data_path)
     print("\nvideo Info : ", end="")
     print(video_info)
 
-    generator = get_video_frames_generator(conf["video_target_path"])
+    generator = sv.get_video_frames_generator(data_path)
+    box_annotator = sv.BoxAnnotator(
+        color=ColorPalette(), thickness=1, text_thickness=1, text_scale=0.4
+    )
+
+    result_path = os.path.join(os.getcwd(), "video_inference")
+    os.makedirs(result_path, exist_ok=True)
+    result_path = os.path.join(result_path, "target_video.mp4")
+
+    with sv.VideoSink(target_path=result_path, video_info=video_info) as sink:
+        print(f"{video_info.total_frames = }")
+
+        for idx, frame in enumerate(tqdm(generator, total=video_info.total_frames)):
+            if idx == 400:
+                break
+
+            results = model(frame)
+            detections = sv.Detections(
+                xyxy=results[0].boxes.xyxy.cpu().numpy(),
+                confidence=results[0].boxes.conf.cpu().numpy(),
+                class_id=results[0].boxes.cls.cpu().numpy().astype(int),
+            )
+
+            tracks = byte_tracker.update(
+                output_results=detections2boxes(detections=detections),
+                img_info=frame.shape,
+                img_size=frame.shape,
+            )
+
+            tracker_id = match_detections_with_tracks(
+                detections=detections, tracks=tracks
+            )
+
+            detections.tracker_id = np.array(tracker_id)
+
+            mask = np.array(
+                [tracker_id is not None for tracker_id in detections.tracker_id],
+                dtype=bool,
+            )
+
+            detections = filter(detections, mask)
+
+            labels = [
+                f"#{tracker_id} {confidence:0.2f}"
+                for _, confidence, class_id, tracker_id in detections
+            ]
+
+            frame = box_annotator.annotate(
+                frame=frame, detections=detections, labels=labels
+            )
+
+            sink.write_frame(frame)
 
     raise NotImplementedError
