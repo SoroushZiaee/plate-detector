@@ -80,7 +80,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
                     class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
                 ]
             )
-        characters.sort(key=lambda x: x[0], reverse=True)
+        characters.sort(key=lambda x: x[0], reverse=False)
         plate_number = []
         for idx, (x, y, class_id) in enumerate(characters):
             plate_number.append(str(class_id))
