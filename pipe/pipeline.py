@@ -89,7 +89,7 @@ def ocr_on_video(model_character, frame):
 
 
 def inference_on_video(model_plate, model_character, data_path):
-    conf_thresh = 0.65
+    conf_thresh = 0.75
     byte_tracker = BYTETracker(BYTETrackerArgs())
     video_info = sv.VideoInfo.from_video_path(data_path)
     print("\nvideo Info : ", end="")
