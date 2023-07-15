@@ -114,6 +114,8 @@ def inference_on_video(model, data_path):
 
             for item in detections:
                 print(f"{len(item) = }")
+                print(f"{item}")
+                break
 
             labels = [
                 f"#{tracker_id} {confidence:0.2f}"
