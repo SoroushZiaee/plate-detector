@@ -70,11 +70,30 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
 
         detections = filter(detections, mask)
 
+        characters = []
+        for idx, (bbox, _, confidence, class_id, _) in enumerate(detections):
+            center_x, center_y = calculate_bbox_center(bbox)
+            characters.append(
+                [
+                    center_x,
+                    center_y,
+                    class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
+                ]
+            )
+        characters.sort(key=lambda x: x[0], reverse=True)
+        plate_number = []
+        for idx, (x, y, class_id) in enumerate(characters):
+            plate_number.append(str(class_id))
+
+        plate_number = " ".join(plate_number)
+
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
             annotated_frame = box_annotator.annotate(scene=image, detections=detections)
             sink.save_image(image=annotated_frame)
+            with open(os.path.join(result_path, "sample.txt")) as fout:
+                fout.write(plate_number)
 
 
 @dataclass(frozen=True)
