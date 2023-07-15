@@ -79,11 +79,11 @@ def pad_image(image, height=500, width=500):
 
 
 def preprocess_image(plate_img_gr):
-    linessorted = find_longest_line(plate_img_gr)
-    rot_angle = find_line_angle(linessorted[-1])
-    rotated_img = rotate_image(plate_img_gr, rot_angle)
-    cropped_rotated_img = adjust_cropping(rotated_img)
-    padded_image = pad_image(cropped_rotated_img)
+    # linessorted = find_longest_line(plate_img_gr)
+    # rot_angle = find_line_angle(linessorted[-1])
+    # rotated_img = rotate_image(plate_img_gr, rot_angle)
+    # cropped_rotated_img = adjust_cropping(rotated_img)
+    padded_image = pad_image(plate_img_gr)
 
     return padded_image
 
