@@ -73,9 +73,7 @@ def inference_on_video(model, data_path):
     print(video_info)
 
     generator = sv.get_video_frames_generator(data_path)
-    box_annotator = sv.BoxAnnotator(
-        color=ColorPalette(), thickness=1, text_thickness=1, text_scale=0.4
-    )
+    box_annotator = sv.BoxAnnotator(thickness=1, text_thickness=1, text_scale=0.4)
 
     result_path = os.path.join(os.getcwd(), "video_inference")
     os.makedirs(result_path, exist_ok=True)
