@@ -29,5 +29,5 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
             sink.save_image(image=annotated_frame)
 
 
-def inference_on_video(model):
+def inference_on_video(model, data_path):
     raise NotImplementedError
