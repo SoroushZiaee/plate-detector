@@ -200,4 +200,6 @@ def extract_plate_character(detections):
             ]
         )
 
-    return " ".join(map(sorted(characters, key=lambda x: x[0], reverse=False), str))
+    return " ".join(
+        list(map(sorted(characters, key=lambda x: x[0], reverse=False), str))
+    )
