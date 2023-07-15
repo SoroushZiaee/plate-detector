@@ -112,14 +112,16 @@ def inference_on_video(model, data_path):
 
             detections = filter(detections, mask)
 
-            for item in detections:
-                print(f"{len(item) = }")
-                print(f"{item}")
-                break
+            # 5 items -> [bbox, unknown, confidenc, class_id, tracker_id]
+
+            # for item in detections:
+            #     print(f"{len(item) = }")
+            #     print(f"{item}")
+            #     break
 
             labels = [
                 f"#{tracker_id} {confidence:0.2f}"
-                for _, confidence, class_id, tracker_id in detections
+                for _, _, confidence, class_id, tracker_id in detections
             ]
 
             frame = box_annotator.annotate(
