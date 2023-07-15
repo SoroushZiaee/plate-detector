@@ -45,8 +45,8 @@ def find_line_angle(line):
 
 
 def rotate_image(plate_img_gr, angle):
-    (h, w) = plate_img_gr.shape
-    (cX, cY) = (w // 2, h // 2)
+    h, w = plate_img_gr.shape
+    cX, cY = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D((cX, cY), angle, 1.0)
     rotated = cv2.warpAffine(plate_img_gr, M, (w, h))
     return rotated
