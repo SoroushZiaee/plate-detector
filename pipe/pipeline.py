@@ -19,6 +19,7 @@ from util.utils import (
     filter,
     detections2boxes,
     match_detections_with_tracks,
+    calculate_car_center,
 )
 
 
@@ -66,7 +67,17 @@ class BYTETrackerArgs:
     mot20: bool = False
 
 
-def inference_on_video(model, data_path):
+def ocr_on_video(model_character, frame):
+    results = model_character(frame)[0]
+    detections = sv.Detections.from_yolov8(results)
+
+    for idx, item in enumerate(detections):
+        print(f"#{idx} {item = }")
+
+    raise NotImplementedError
+
+
+def inference_on_video(model_plate, model_character, data_path):
     byte_tracker = BYTETracker(BYTETrackerArgs())
     video_info = sv.VideoInfo.from_video_path(data_path)
     print("\nvideo Info : ", end="")
@@ -86,7 +97,7 @@ def inference_on_video(model, data_path):
             if idx == 400:
                 break
 
-            results = model(frame)
+            results = model_plate(frame)
             detections = sv.Detections(
                 xyxy=results[0].boxes.xyxy.cpu().numpy(),
                 confidence=results[0].boxes.conf.cpu().numpy(),
@@ -112,12 +123,10 @@ def inference_on_video(model, data_path):
 
             detections = filter(detections, mask)
 
-            # 5 items -> [bbox, unknown, confidenc, class_id, tracker_id]
-
-            # for item in detections:
-            #     print(f"{len(item) = }")
-            #     print(f"{item}")
-            #     break
+            # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
+            for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
+                cropped_frame = sv.crop(image=frame, xyxy=xyxy)
+                ocr_on_video(model_character, cropped_frame)
 
             labels = [
                 f"#{tracker_id} {confidence:0.2f}"
@@ -129,5 +138,3 @@ def inference_on_video(model, data_path):
             )
 
             sink.write_frame(frame)
-
-    raise NotImplementedError

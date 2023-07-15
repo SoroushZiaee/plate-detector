@@ -34,12 +34,15 @@ def parse_args():
 
 def run(data_path: str, model_path: str, type_detection: str):
     filename, extension = os.path.splitext(data_path)
-    model = load_model(model_path, type_detection)
 
     if extension in [".mp4"]:
-        inference_on_video(model, data_path)
+        model_plate = load_model(model_path, "plate")
+        model_character = load_model(model_path, "character")
+
+        inference_on_video(model_plate, model_character, data_path)
 
     if extension in [".png", ".jpeg", ".jpg"]:
+        model = load_model(model_path, type_detection)
         inference_on_image(model, data_path, type_detection)
 
 

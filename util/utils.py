@@ -137,3 +137,9 @@ def match_detections_with_tracks(
             tracker_ids[detection_index] = tracks[tracker_index].track_id
 
     return tracker_ids
+
+
+# calculate car center by finding center of bbox
+def calculate_car_center(bbox):
+    x1, y1, x2, y2 = bbox
+    return ((x1 + x2) // 2, (y1 + y2) // 2)
