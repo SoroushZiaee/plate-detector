@@ -107,16 +107,19 @@ def ocr_on_video(model_character, frame):
                 class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
             ]
         )
-        print(
-            f"#{idx}: {(center_x, center_y)} - {confidence:0.2f} - {class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id]}"
-        )
+        # print(
+        #     f"#{idx}: {(center_x, center_y)} - {confidence:0.2f} - {class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id]}"
+        # )
 
-    characters.sort(key=lambda x: x[0])
+    characters.sort(key=lambda x: x[0], reverse=True)
 
+    # for idx, (x, y, class_id) in enumerate(characters):
+    #     print(f"#{idx}: {(x, y)} - {class_id}")
+    plate_number = []
     for idx, (x, y, class_id) in enumerate(characters):
-        print(f"#{idx}: {(x, y)} - {class_id}")
+        plate_number.append(str(class_id))
 
-    raise NotImplementedError
+    return " ".join(plate_number)
 
 
 def inference_on_video(model_plate, model_character, data_path):
@@ -131,6 +134,9 @@ def inference_on_video(model_plate, model_character, data_path):
     result_path = os.path.join(os.getcwd(), "video_inference")
     os.makedirs(result_path, exist_ok=True)
     result_path = os.path.join(result_path, "target_video.mp4")
+
+    plate_path = os.path.join(os.getcwd(), "plates")
+    os.makedirs(plate_path, exist_ok=True)
 
     with sv.VideoSink(target_path=result_path, video_info=video_info) as sink:
         print(f"{video_info.total_frames = }")
@@ -168,7 +174,14 @@ def inference_on_video(model_plate, model_character, data_path):
             # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
             for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
                 cropped_frame = sv.crop(image=frame, xyxy=xyxy)
-                ocr_on_video(model_character, cropped_frame)
+                cv2.imwrite(
+                    os.path.join(plate_path, f"plate_{tracker_id}.jpg"), cropped_frame
+                )
+                plate_number = ocr_on_video(model_character, cropped_frame)
+                with open(
+                    os.path.join(plate_path, f"plate_{tracker_id}.txt"), "w"
+                ) as fout:
+                    fout.write(plate_number)
 
             labels = [
                 f"#{tracker_id} {confidence:0.2f}"
