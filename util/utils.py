@@ -145,3 +145,59 @@ def calculate_bbox_center(bbox):
     center_x = (x1 + x2) / 2
     center_y = (y1 + y2) / 2
     return center_x, center_y
+
+
+def extract_plate_character(detections):
+    ALPHABET_IDX_MAPPING = {
+        "B": "10",
+        "Dal": "11",
+        "Ghaf": "12",
+        "Gim": "13",
+        "H": "14",
+        "Lam": "15",
+        "Mim": "16",
+        "Nun": "17",
+        "Sad": "18",
+        "Sin": "19",
+        "T": "20",
+        "Tah": "21",
+        "Vav": "22",
+        "Ye": "23",
+        "plate": "24",
+    }
+
+    ENG_TO_PER = {
+        "B": "ب",
+        "Dal": "د",
+        "Ghaf": "ق",
+        "Gim": "ل",
+        "H": "ه",
+        "Lam": "ل",
+        "Mim": "م",
+        "Nun": "ن",
+        "Sad": "ص",
+        "Sin": "س",
+        "T": "ت",
+        "Tah": "ط",
+        "Vav": "و",
+        "Ye": "ی",
+    }
+
+    IDX_ALPHABET_MAPPING = {
+        int(value): key for key, value in ALPHABET_IDX_MAPPING.items()
+    }
+
+    characters = []
+    for idx, (bbox, _, confidence, class_id, _) in enumerate(detections):
+        center_x, center_y = calculate_bbox_center(bbox)
+        characters.append(
+            [
+                center_x,
+                center_y,
+                class_id
+                if class_id < 10
+                else ENG_TO_PER[IDX_ALPHABET_MAPPING[class_id]],
+            ]
+        )
+
+    return " ".join(map(sorted(characters, key=lambda x: x[0], reverse=False), str))

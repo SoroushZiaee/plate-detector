@@ -20,6 +20,7 @@ from util.utils import (
     detections2boxes,
     match_detections_with_tracks,
     calculate_bbox_center,
+    extract_plate_character,
 )
 
 ALPHABET_IDX_MAPPING = {
@@ -70,22 +71,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
 
         detections = filter(detections, mask)
 
-        characters = []
-        for idx, (bbox, _, confidence, class_id, _) in enumerate(detections):
-            center_x, center_y = calculate_bbox_center(bbox)
-            characters.append(
-                [
-                    center_x,
-                    center_y,
-                    class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
-                ]
-            )
-        characters.sort(key=lambda x: x[0], reverse=False)
-        plate_number = []
-        for idx, (x, y, class_id) in enumerate(characters):
-            plate_number.append(str(class_id))
-
-        plate_number = " ".join(plate_number)
+        plate_number = extract_plate_character(detections)
 
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
@@ -116,29 +102,9 @@ def ocr_on_video(model_character, frame):
 
     detections = filter(detections, mask)
 
-    characters = []
-    for idx, (bbox, _, confidence, class_id, _) in enumerate(detections):
-        center_x, center_y = calculate_bbox_center(bbox)
-        characters.append(
-            [
-                center_x,
-                center_y,
-                class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
-            ]
-        )
-        # print(
-        #     f"#{idx}: {(center_x, center_y)} - {confidence:0.2f} - {class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id]}"
-        # )
+    plate_number = extract_plate_character(detections)
 
-    characters.sort(key=lambda x: x[0], reverse=True)
-
-    # for idx, (x, y, class_id) in enumerate(characters):
-    #     print(f"#{idx}: {(x, y)} - {class_id}")
-    plate_number = []
-    for idx, (x, y, class_id) in enumerate(characters):
-        plate_number.append(str(class_id))
-
-    return " ".join(plate_number)
+    return plate_number
 
 
 def inference_on_video(model_plate, model_character, data_path):
