@@ -23,26 +23,6 @@ from util.utils import (
     extract_plate_character,
 )
 
-ALPHABET_IDX_MAPPING = {
-    "B": "10",
-    "Dal": "11",
-    "Ghaf": "12",
-    "Gim": "13",
-    "H": "14",
-    "Lam": "15",
-    "Mim": "16",
-    "Nun": "17",
-    "Sad": "18",
-    "Sin": "19",
-    "T": "20",
-    "Tah": "21",
-    "Vav": "22",
-    "Ye": "23",
-    "plate": "24",
-}
-
-IDX_ALPHABET_MAPPING = {int(value): key for key, value in ALPHABET_IDX_MAPPING.items()}
-
 
 def inference_on_image(model, data_path: str, type_detection: str = "plate"):
     if type_detection.lower() == "plate":
@@ -72,6 +52,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         detections = filter(detections, mask)
 
         plate_number = extract_plate_character(detections)
+        print(f"{plate_number = }")
 
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
