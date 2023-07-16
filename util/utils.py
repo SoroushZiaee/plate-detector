@@ -5,6 +5,8 @@ from math import sqrt, atan, degrees
 import supervision as sv
 from yolox.tracker.byte_tracker import STrack
 from onemetric.cv.utils.iou import box_iou_batch
+from farsi_tools import replace_ascii_digits_with_farsi
+
 
 from typing import List
 
@@ -190,7 +192,7 @@ def extract_plate_character(detections):
     characters = [
         [
             *calculate_bbox_center(bbox),
-            class_id if class_id < 10 else ENG_TO_PER[IDX_ALPHABET_MAPPING[class_id]],
+            class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
         ]
         for bbox, _, _, class_id, _ in detections
     ]
@@ -222,6 +224,7 @@ def is_plate(plate_number_list):
 
 
 def get_plate_number(plate_number_list):
+    # plate_number_list = list(map(replace_ascii_digits_with_farsi, plate_number_list))
     plate_number = f"{str(plate_number_list[0]) + str(plate_number_list[1])} ({plate_number_list[2]}) {str(plate_number_list[3]) + str(plate_number_list[4]) + str(plate_number_list[5])} - {str(plate_number_list[6]) + str(plate_number_list[7])}"
 
     return plate_number
