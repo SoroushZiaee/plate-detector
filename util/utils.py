@@ -195,9 +195,11 @@ def extract_plate_character(detections):
         for bbox, _, _, class_id, _ in detections
     ]
 
-    return " ".join(
+    plate_number_list = list(
         map(
             str,
             map(lambda x: x[2], sorted(characters, key=lambda x: x[0], reverse=True)),
         )
     )
+
+    return plate_number_list

@@ -13,6 +13,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 from dataclasses import dataclass
+from collections import defaultdict
 
 from util.utils import (
     preprocess_image,
@@ -82,10 +83,10 @@ def ocr_on_video(model_character, frame):
 
     detections = filter(detections, mask)
 
-    plate_number = extract_plate_character(detections)
-    print(f"{plate_number = }")
+    plate_number_list = extract_plate_character(detections)
+    print(f"{plate_number_list = }")
 
-    return plate_number
+    return plate_number_list
 
 
 def inference_on_video(model_plate, model_character, data_path):
@@ -104,6 +105,10 @@ def inference_on_video(model_plate, model_character, data_path):
 
     plate_path = os.path.join(os.getcwd(), "plates")
     os.makedirs(plate_path, exist_ok=True)
+
+    plate_details = defaultdict(
+        lambda: {"frame": None, "plate": None, "is_plate": False}
+    )  # define plate details
 
     with sv.VideoSink(target_path=result_path, video_info=video_info) as sink:
         print(f"{video_info.total_frames = }")
@@ -146,19 +151,41 @@ def inference_on_video(model_plate, model_character, data_path):
             detections = filter(detections, mask)
 
             # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
+
             for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
-                cropped_frame = sv.crop(image=frame, xyxy=xyxy)
-                cv2.imwrite(
-                    os.path.join(plate_path, f"plate_{tracker_id}.jpg"), cropped_frame
-                )
-                plate_number = ocr_on_video(model_character, cropped_frame)
-                with open(
-                    os.path.join(plate_path, f"plate_{tracker_id}.txt"), "w"
-                ) as fout:
-                    fout.write(plate_number)
+                if tracker_id not in plate_details.keys():
+                    cropped_frame = sv.crop(image=frame, xyxy=xyxy)
+
+                    plate_number_list = ocr_on_video(model_character, cropped_frame)
+
+                    if len(plate_number_list) > 7:
+                        plate_details[tracker_id]["frame"] = cropped_frame
+                        plate_details[tracker_id]["plate"] = plate_number_list
+                        plate_details[tracker_id]["is_plate"] = True
+
+                    else:
+                        print(
+                            f"the plate format of {tracker_id} isn't correct: {len(plate_number_list) = }"
+                        )
+
+                    # cv2.imwrite(
+                    #     os.path.join(plate_path, f"plate_{tracker_id}.jpg"),
+                    #     cropped_frame,
+                    # )
+                    # with open(
+                    #     os.path.join(plate_path, f"plate_{tracker_id}.txt"), "w"
+                    # ) as fout:
+                    #     fout.write("-".join(plate_number_list))
+
+                else:
+                    print("*" * 100)
+                    print("Plater is detected.")
+                    print(f"{plate_details[tracker_id]['plate'] = }")
+                    print(f"{plate_details[tracker_id]['is_plate'] = }")
+                    print("*" * 100)
 
             labels = [
-                f"#{tracker_id} {confidence:0.2f}"
+                f"#{tracker_id} {confidence:0.2f} {plate_details[tracker_id]['plate'] tracker_id in plate_details.keys() else None}"
                 for _, _, confidence, class_id, tracker_id in detections
             ]
 
