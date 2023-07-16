@@ -203,3 +203,19 @@ def extract_plate_character(detections):
     )
 
     return plate_number_list
+
+
+def is_plate(plate_number_list):
+    number_counter = 0
+    word_counter = 0
+
+    for char in plate_number_list:
+        if char.isdigit():
+            number_counter += 1
+        else:
+            word_counter += 1
+
+    if number_counter == 7 and word_counter == 1:
+        return True
+
+    return False
