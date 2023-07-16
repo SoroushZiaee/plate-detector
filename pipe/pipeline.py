@@ -158,7 +158,9 @@ def inference_on_video(model_plate, model_character, data_path):
 
                     plate_number_list = ocr_on_video(model_character, cropped_frame)
 
-                    if len(plate_number_list) > 7:
+                    if (
+                        len(plate_number_list) == 8
+                    ):  # Check if the 8 segments are detected
                         plate_details[tracker_id]["frame"] = cropped_frame
                         plate_details[tracker_id]["plate"] = plate_number_list
                         plate_details[tracker_id]["is_plate"] = True
