@@ -190,7 +190,7 @@ def extract_plate_character(detections):
     characters = [
         [
             *calculate_bbox_center(bbox),
-            class_id if class_id < 10 else ENG_TO_PER[IDX_ALPHABET_MAPPING[class_id]],
+            class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
         ]
         for bbox, _, _, class_id, _ in detections
     ]
@@ -198,7 +198,7 @@ def extract_plate_character(detections):
     plate_number_list = list(
         map(
             str,
-            map(lambda x: x[2], sorted(characters, key=lambda x: x[0], reverse=True)),
+            map(lambda x: x[2], sorted(characters, key=lambda x: x[0], reverse=False)),
         )
     )
 
