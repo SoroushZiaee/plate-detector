@@ -190,7 +190,7 @@ def extract_plate_character(detections):
     characters = [
         [
             *calculate_bbox_center(bbox),
-            class_id if class_id < 10 else IDX_ALPHABET_MAPPING[class_id],
+            class_id if class_id < 10 else ENG_TO_PER[IDX_ALPHABET_MAPPING[class_id]],
         ]
         for bbox, _, _, class_id, _ in detections
     ]
@@ -219,3 +219,9 @@ def is_plate(plate_number_list):
         return True
 
     return False
+
+
+def get_plate_number(plate_number_list):
+    plate_number = f"{str(plate_number_list[0]) + str(plate_number_list[1])} ({plate_number_list[2]}) {str(plate_number_list[3]) + str(plate_number_list[4]) + str(plate_number_list[5])} - {str(plate_number_list[6]) + str(plate_number_list[7])}"
+
+    return plate_number
