@@ -163,19 +163,19 @@ def inference_on_video(model_plate, model_character, data_path):
                         plate_details[tracker_id]["plate"] = plate_number_list
                         plate_details[tracker_id]["is_plate"] = True
 
+                        cv2.imwrite(
+                            os.path.join(plate_path, f"plate_{tracker_id}.jpg"),
+                            cropped_frame,
+                        )
+                        with open(
+                            os.path.join(plate_path, f"plate_{tracker_id}.txt"), "w"
+                        ) as fout:
+                            fout.write("-".join(plate_number_list))
+
                     else:
                         print(
                             f"the plate format of {tracker_id} isn't correct: {len(plate_number_list) = }"
                         )
-
-                    # cv2.imwrite(
-                    #     os.path.join(plate_path, f"plate_{tracker_id}.jpg"),
-                    #     cropped_frame,
-                    # )
-                    # with open(
-                    #     os.path.join(plate_path, f"plate_{tracker_id}.txt"), "w"
-                    # ) as fout:
-                    #     fout.write("-".join(plate_number_list))
 
                 else:
                     print("*" * 100)
