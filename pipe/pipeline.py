@@ -1,5 +1,5 @@
 import supervision as sv
-from supervision.draw.color import ColorPalette
+from supervision.draw.color import ColorPalette, Color
 
 # from supervision.video.source import get_video_frames_generator
 
@@ -100,7 +100,12 @@ def inference_on_video(model_plate, model_character, data_path):
     print(video_info)
 
     generator = sv.get_video_frames_generator(data_path)
-    box_annotator = sv.BoxAnnotator(thickness=1, text_thickness=1, text_scale=0.4)
+    box_annotator = sv.BoxAnnotator(
+        color=Color.white(),
+        thickness=1,
+        text_thickness=1,
+        text_scale=1.2,
+    )
 
     result_path = os.path.join(os.getcwd(), "video_inference")
     os.makedirs(result_path, exist_ok=True)
@@ -193,8 +198,7 @@ def inference_on_video(model_plate, model_character, data_path):
                     print("*" * 100)
 
             labels = [
-                f"""#Conf:{confidence*100:0.2f}% 
-                Plate:{plate_details[tracker_id]['plate'] if tracker_id in plate_details.keys() else None}"""
+                f"""{plate_details[tracker_id]['plate'] if tracker_id in plate_details.keys() else None}"""
                 for _, _, confidence, class_id, tracker_id in detections
             ]
 
