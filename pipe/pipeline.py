@@ -190,7 +190,7 @@ def inference_on_video(model_plate, model_character, data_path):
                     print("*" * 100)
 
             labels = [
-                f"#{tracker_id} {confidence:0.2f} {plate_details[tracker_id]['plate'] if tracker_id in plate_details.keys() else None}"
+                f"#Conf:{confidence*100:0.2f}%\nPlate:{plate_details[tracker_id]['plate'] if tracker_id in plate_details.keys() else None}"
                 for _, _, confidence, class_id, tracker_id in detections
             ]
 
