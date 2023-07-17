@@ -33,6 +33,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
 
         results = model(data_path)[0]
         detections = sv.Detections.from_yolov8(results)
+        detections = detections.with_nms(threshold=0.75)
         image = cv2.imread(data_path)
 
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
@@ -46,6 +47,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         os.makedirs(result_path, exist_ok=True)
         results = model(data_path)[0]
         detections = sv.Detections.from_yolov8(results)
+        detections = detections.with_nms(threshold=0.75)
 
         mask = np.array(
             [class_id != 24 for class_id in detections.class_id], dtype=bool
@@ -124,6 +126,7 @@ def inference_on_video(model_plate, model_character, data_path):
                 confidence=results[0].boxes.conf.cpu().numpy(),
                 class_id=results[0].boxes.cls.cpu().numpy().astype(int),
             )
+            detections = detections.with_nms(threshold=0.75)
 
             tracks = byte_tracker.update(
                 output_results=detections2boxes(detections=detections),
