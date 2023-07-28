@@ -56,7 +56,6 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         detections = filter(detections, mask)
 
         plate_number = extract_plate_character(detections)
-        print(f"{plate_number = }")
 
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
@@ -64,7 +63,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
             annotated_frame = box_annotator.annotate(scene=image, detections=detections)
             sink.save_image(image=annotated_frame)
             with open(os.path.join(result_path, "sample.txt"), "w") as fout:
-                fout.write(plate_number)
+                fout.write(" ".join(plate_number))
 
 
 @dataclass(frozen=True)
