@@ -46,10 +46,11 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         result_path = os.path.join(os.getcwd(), "plates-type")
         os.makedirs(result_path, exist_ok=True)
         results = model(data_path)[0]
-        print(f"{model.model.names = }")
+        plate_types_dict = model.model.names
+
         detections = sv.Detections.from_yolov8(results)
         detections = detections.with_nms(threshold=0.75)
-        print(f"{detections.class_id = }")
+        print(f"plate type: {plate_types_dict[detections.class_id[0]]}")
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
@@ -108,10 +109,15 @@ def ocr_on_video(model_character, frame):
 
 def type_of_plate_on_video(model_type_plate, frame):
     results = model_type_plate(frame)[0]
+    plates_types_dict = model_type_plate.model.names
     detections = sv.Detections.from_yolov8(results)
 
+    plate_type = plates_types_dict[detections.class_id[0]]
 
-def inference_on_video(model_plate, model_character, model_type, data_path):
+    return plate_type
+
+
+def inference_on_video(model_plate, model_character, model_type_of_plate, data_path):
     conf_thresh = 0.75
     byte_tracker = BYTETracker(BYTETrackerArgs())
     video_info = sv.VideoInfo.from_video_path(data_path)
@@ -134,7 +140,7 @@ def inference_on_video(model_plate, model_character, model_type, data_path):
     os.makedirs(plate_path, exist_ok=True)
 
     plate_details = defaultdict(
-        lambda: {"frame": None, "plate": None, "is_plate": False}
+        lambda: {"frame": None, "plate": None, "plate_type": None, "is_plate": False}
     )  # define plate details
 
     with sv.VideoSink(target_path=result_path, video_info=video_info) as sink:
@@ -194,6 +200,9 @@ def inference_on_video(model_plate, model_character, model_type, data_path):
                             plate_number_list
                         )
                         plate_details[tracker_id]["is_plate"] = True
+                        plate_details[tracker_id][
+                            "plate_type"
+                        ] = type_of_plate_on_video(model_type_of_plate, cropped_frame)
 
                         cv2.imwrite(
                             os.path.join(plate_path, f"plate_{tracker_id}.jpg"),
@@ -214,10 +223,11 @@ def inference_on_video(model_plate, model_character, model_type, data_path):
                     print("Plater is detected.")
                     print(f"{plate_details[tracker_id]['plate'] = }")
                     print(f"{plate_details[tracker_id]['is_plate'] = }")
+                    print(f"{plate_details[tracker_id]['plate_type'] = }")
                     print("*" * 100)
 
             labels = [
-                f"""{plate_details[tracker_id]['plate'] if tracker_id in plate_details.keys() else None}"""
+                f"""{plate_details[tracker_id]['plate_type']} - {plate_details[tracker_id]['plate'] if tracker_id in plate_details.keys() else None}"""
                 for _, _, confidence, class_id, tracker_id in detections
             ]
 

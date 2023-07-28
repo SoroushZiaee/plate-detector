@@ -43,7 +43,7 @@ def run(data_path: str, model_path: str, type_detection: str):
         inference_on_video(model_plate, model_character, model_type, data_path)
 
     if extension in [".png", ".jpeg", ".jpg"]:
-        model = load_model(model_path, type_detection)
+        model, _ = load_model(model_path, type_detection)
         inference_on_image(model, data_path, type_detection)
 
 
