@@ -42,6 +42,17 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
                 preprocessed_image = preprocess_image(cropped_image)
                 sink.save_image(image=preprocessed_image)
 
+    if type_detection.lower() == "type":
+        result_path = os.path.join(os.getcwd(), "plates-type")
+        os.makedirs(result_path, exist_ok=True)
+        results = model(data_path)[0]
+        detections = sv.Detections.from_yolov8(results)
+        detections = detections.with_nms(threshold=0.75)
+        image = cv2.imread(data_path)
+        with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
+            annotated_frame = box_annotator.annotate(scene=image, detections=detections)
+            sink.save_image(image=annotated_frame)
+
     if type_detection.lower() == "character":
         result_path = os.path.join(os.getcwd(), "characters")
         os.makedirs(result_path, exist_ok=True)

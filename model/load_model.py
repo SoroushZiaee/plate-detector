@@ -7,6 +7,10 @@ def load_model(model_path: str, type_detection: str):
         model_path = os.path.join(model_path, "plate-detector.pt")
         return YOLO(model_path)
 
+    if type_detection == "type":
+        model_path = os.path.join(model_path, "type.pt")  # character-detector
+        return YOLO(model_path)
+
     if type_detection == "character":
         model_path = os.path.join(
             model_path, "character-detector.pt"
