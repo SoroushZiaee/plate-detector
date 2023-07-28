@@ -56,6 +56,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         detections = filter(detections, mask)
 
         plate_number = extract_plate_character(detections)
+        print(f"{plate_number = }")
 
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
