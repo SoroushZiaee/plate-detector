@@ -46,8 +46,10 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         result_path = os.path.join(os.getcwd(), "plates-type")
         os.makedirs(result_path, exist_ok=True)
         results = model(data_path)[0]
+        print(f"{model.model.names = }")
         detections = sv.Detections.from_yolov8(results)
         detections = detections.with_nms(threshold=0.75)
+        print(f"{detections.class_id = }")
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
@@ -104,7 +106,12 @@ def ocr_on_video(model_character, frame):
     return plate_number_list
 
 
-def inference_on_video(model_plate, model_character, data_path):
+def type_of_plate_on_video(model_type_plate, frame):
+    results = model_type_plate(frame)[0]
+    detections = sv.Detections.from_yolov8(results)
+
+
+def inference_on_video(model_plate, model_character, model_type, data_path):
     conf_thresh = 0.75
     byte_tracker = BYTETracker(BYTETrackerArgs())
     video_info = sv.VideoInfo.from_video_path(data_path)

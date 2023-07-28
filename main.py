@@ -38,8 +38,9 @@ def run(data_path: str, model_path: str, type_detection: str):
     if extension in [".mp4"]:
         model_plate = load_model(model_path, "plate")
         model_character = load_model(model_path, "character")
+        model_type = load_model(model_path, "type")
 
-        inference_on_video(model_plate, model_character, data_path)
+        inference_on_video(model_plate, model_character, model_type, data_path)
 
     if extension in [".png", ".jpeg", ".jpg"]:
         model = load_model(model_path, type_detection)
