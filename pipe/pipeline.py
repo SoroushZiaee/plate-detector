@@ -48,6 +48,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         results = model(data_path)[0]
         detections = sv.Detections.from_yolov8(results)
         detections = detections.with_nms(threshold=0.75)
+        box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
             annotated_frame = box_annotator.annotate(scene=image, detections=detections)
