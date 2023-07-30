@@ -208,7 +208,7 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                     if is_plate(
                         plate_number_list
                     ):  # Check if the 8 segments are detected
-                        plate_details[tracker_id]["frame"] = cropped_frame
+                        # plate_details[tracker_id]["frame"] = cropped_frame
                         plate_details[tracker_id]["plate"] = get_plate_number(
                             plate_number_list
                         )
