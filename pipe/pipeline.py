@@ -48,7 +48,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         os.makedirs(result_path, exist_ok=True)
         results = model(data_path)[0]
         plate_types_dict = model.model.names
-
+        print(f"{plate_types_dict = }")
         detections = sv.Detections.from_yolov8(results)
         detections = detections.with_nms(threshold=0.75)
         plate_type = plate_types_dict[detections.class_id[0]]
