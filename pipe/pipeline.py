@@ -10,6 +10,7 @@ from yolox.tracker.byte_tracker import BYTETracker
 
 import os
 import cv2
+import json
 import numpy as np
 from tqdm import tqdm
 from dataclasses import dataclass
@@ -193,6 +194,8 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
             # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
 
             for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
+                tracker_id = int(tracker_id)  # to save in json file
+
                 if (
                     tracker_id not in plate_details.keys()
                     or plate_details.get(tracker_id, False).get("is_plate", False)
@@ -237,6 +240,7 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                     print("*" * 100)
                     print("Plate is detected.")
                     print(f"{plate_details[tracker_id]['plate'] = }")
+                    print(f"{plate_details[tracker_id]['fa_plate'] = }")
                     print(f"{plate_details[tracker_id]['is_plate'] = }")
                     print(f"{plate_details[tracker_id]['plate_type'] = }")
                     print("*" * 100)
@@ -249,5 +253,8 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
             frame = box_annotator.annotate(
                 scene=frame, detections=detections, labels=labels
             )
+
+            with open(plate_path, "plate_details.json", "w") as fout:
+                json.dump(plate_details, fout)
 
             sink.write_frame(frame)
