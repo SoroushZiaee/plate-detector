@@ -175,7 +175,7 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                 detections=detections, tracks=tracks
             )
 
-            detections.tracker_id = np.array(tracker_id).astype("int32")
+            detections.tracker_id = np.array(tracker_id).astype("str")
 
             mask = np.array(
                 [tracker_id is not None for tracker_id in detections.tracker_id],
