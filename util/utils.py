@@ -151,6 +151,16 @@ def calculate_bbox_center(bbox):
 
 def extract_plate_character(detections):
     ALPHABET_IDX_MAPPING = {
+        "0": "0",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
         "B": "10",
         "Dal": "11",
         "Ghaf": "12",
@@ -169,6 +179,16 @@ def extract_plate_character(detections):
     }
 
     ENG_TO_PER = {
+        "0": "۰",
+        "1": "۱",
+        "2": "۲",
+        "3": "۳",
+        "4": "۴",
+        "5": "۵",
+        "6": "۶",
+        "7": "۷",
+        "8": "۸",
+        "9": "۹",
         "B": "ب",
         "Dal": "د",
         "Ghaf": "ق",
@@ -197,6 +217,14 @@ def extract_plate_character(detections):
         for bbox, _, _, class_id, _ in detections
     ]
 
+    fa_character = [
+        [
+            *calculate_bbox_center(bbox),
+            class_id if class_id < 10 else ENG_TO_PER[IDX_ALPHABET_MAPPING[class_id]],
+        ]
+        for bbox, _, _, class_id, _ in detections
+    ]
+
     plate_number_list = list(
         map(
             str,
@@ -204,7 +232,16 @@ def extract_plate_character(detections):
         )
     )
 
-    return plate_number_list
+    fa_plate_number_list = list(
+        map(
+            str,
+            map(
+                lambda x: x[2], sorted(fa_character, key=lambda x: x[0], reverse=False)
+            ),
+        )
+    )
+
+    return plate_number_list, fa_plate_number_list
 
 
 def is_plate(plate_number_list):

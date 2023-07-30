@@ -140,7 +140,13 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
     os.makedirs(plate_path, exist_ok=True)
 
     plate_details = defaultdict(
-        lambda: {"frame": None, "plate": None, "plate_type": None, "is_plate": False}
+        lambda: {
+            "frame": None,
+            "plate": None,
+            "plate_type": None,
+            "fa_plate": None,
+            "is_plate": False,
+        }
     )  # define plate details
 
     with sv.VideoSink(target_path=result_path, video_info=video_info) as sink:
@@ -194,10 +200,9 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                 ):
                     cropped_frame = sv.crop(image=frame, xyxy=xyxy)
 
-                    plate_number_list = ocr_on_video(model_character, cropped_frame)
-
-                    print(f"{is_plate(plate_number_list) = }")
-                    print(f"{plate_number_list = }")
+                    plate_number_list, fa_plate_number_list = ocr_on_video(
+                        model_character, cropped_frame
+                    )
 
                     if is_plate(
                         plate_number_list
@@ -205,6 +210,9 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                         plate_details[tracker_id]["frame"] = cropped_frame
                         plate_details[tracker_id]["plate"] = get_plate_number(
                             plate_number_list
+                        )
+                        plate_details[tracker_id]["fa_plate"] = get_plate_number(
+                            fa_plate_number_list
                         )
                         plate_details[tracker_id]["is_plate"] = True
                         plate_details[tracker_id][
