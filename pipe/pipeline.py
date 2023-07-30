@@ -175,6 +175,8 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                 detections=detections, tracks=tracks
             )
 
+            tracker_id = tracker_id.astype(int)
+
             detections.tracker_id = np.array(tracker_id)
 
             mask = np.array(
@@ -194,8 +196,6 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
             # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
 
             for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
-                tracker_id = int(tracker_id)  # to save in json file
-
                 if (
                     tracker_id not in plate_details.keys()
                     or plate_details.get(tracker_id, False).get("is_plate", False)
