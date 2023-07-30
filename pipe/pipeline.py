@@ -177,12 +177,12 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
 
             detections = filter(detections, mask)
 
-            mask = np.array(
-                [confidence > conf_thresh for confidence in detections.confidence],
-                dtype=bool,
-            )
+            # mask = np.array(
+            #     [confidence > conf_thresh for confidence in detections.confidence],
+            #     dtype=bool,
+            # )
 
-            detections = filter(detections, mask)
+            # detections = filter(detections, mask)
 
             # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
 
@@ -203,6 +203,8 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                         plate_details[tracker_id][
                             "plate_type"
                         ] = type_of_plate_on_video(model_type_of_plate, cropped_frame)
+                        print(f"{plate_details[tracker_id]['plate_type'] = }")
+                        print(f"{plate_details[tracker_id]['plate'] = }")
 
                         cv2.imwrite(
                             os.path.join(plate_path, f"plate_{tracker_id}.jpg"),
