@@ -51,11 +51,14 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
 
         detections = sv.Detections.from_yolov8(results)
         detections = detections.with_nms(threshold=0.75)
-        print(f"plate type: {plate_types_dict[detections.class_id[0]]}")
+        plate_type = plate_types_dict[detections.class_id[0]]
+        print(f"{plate_type = }")
         box_annotator = sv.BoxAnnotator()
         image = cv2.imread(data_path)
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
-            annotated_frame = box_annotator.annotate(scene=image, detections=detections)
+            annotated_frame = box_annotator.annotate(
+                scene=image, detections=detections, labels=[plate_type]
+            )
             sink.save_image(image=annotated_frame)
 
     if type_detection.lower() == "character":
@@ -114,6 +117,10 @@ def type_of_plate_on_video(model_type_plate, frame):
     detections = sv.Detections.from_yolov8(results)
 
     plate_type = plates_types_dict[detections.class_id[0]]
+
+    print(f"{detections.class_id[0] = }")
+    print(f"{plate_type = }")
+    print(f"{plates_types_dict = }")
 
     return plate_type
 
