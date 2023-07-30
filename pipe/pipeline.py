@@ -187,11 +187,6 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
             # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
 
             for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
-                print(f"{plate_details.keys() = }")
-                print(
-                    f"{plate_details.get(tracker_id, {}).get('is_plate', 'nothing') = }"
-                )
-
                 if (
                     tracker_id not in plate_details.keys()
                     or plate_details.get(tracker_id, False).get("is_plate", False)
@@ -215,8 +210,6 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                         plate_details[tracker_id][
                             "plate_type"
                         ] = type_of_plate_on_video(model_type_of_plate, cropped_frame)
-                        print(f"{plate_details[tracker_id]['plate_type'] = }")
-                        print(f"{plate_details[tracker_id]['plate'] = }")
 
                         cv2.imwrite(
                             os.path.join(plate_path, f"plate_{tracker_id}.jpg"),
