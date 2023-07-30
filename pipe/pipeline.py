@@ -254,7 +254,7 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
                 scene=frame, detections=detections, labels=labels
             )
 
-            with open(plate_path, "plate_details.json", "w") as fout:
+            with open(os.path.join(plate_path, "plate_details.json"), "w") as fout:
                 json.dump(plate_details, fout)
 
             sink.write_frame(frame)
