@@ -8,7 +8,7 @@ def load_model(model_path: str, type_detection: str):
         return YOLO(model_path)
 
     if type_detection == "type":
-        model_path = os.path.join(model_path, "type.pt")  # character-detector
+        model_path = os.path.join(model_path, "best.pt")  # character-detector
         return YOLO(model_path)
 
     if type_detection == "character":
