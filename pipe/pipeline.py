@@ -192,6 +192,9 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
 
                     plate_number_list = ocr_on_video(model_character, cropped_frame)
 
+                    print(f"{is_plate(plate_number_list) = }")
+                    print(f"{plate_number_list = }")
+
                     if is_plate(
                         plate_number_list
                     ):  # Check if the 8 segments are detected
@@ -222,7 +225,7 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
 
                 else:
                     print("*" * 100)
-                    print("Plater is detected.")
+                    print("Plate is detected.")
                     print(f"{plate_details[tracker_id]['plate'] = }")
                     print(f"{plate_details[tracker_id]['is_plate'] = }")
                     print(f"{plate_details[tracker_id]['plate_type'] = }")
