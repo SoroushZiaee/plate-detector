@@ -188,7 +188,9 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
 
             for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
                 print(f"{plate_details.keys() = }")
-                print(f"{plate_details.get(tracker_id).get('is_plate') = }")
+                print(
+                    f"{plate_details.get(tracker_id, {}).get('is_plate', 'nothing') = }"
+                )
 
                 if (
                     tracker_id not in plate_details.keys()
