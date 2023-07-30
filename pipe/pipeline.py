@@ -187,6 +187,7 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
             # 5 items -> [bbox, unknown, confidence, class_id, tracker_id] (detections)
 
             for xyxy, tracker_id in zip(detections.xyxy, detections.tracker_id):
+                print(f"{plate_details.keys() = }")
                 if tracker_id not in plate_details.keys():
                     cropped_frame = sv.crop(image=frame, xyxy=xyxy)
 
