@@ -49,7 +49,9 @@ def inference_on_image(
                 temp_detection = sv.Detections(
                     xyxy=xyxy.reshape(-1, 4),
                     confidence=conf,
-                    class_id=np.array(plate_type),
+                    class_id=np.array(plate_type).reshape(
+                        -1,
+                    ),
                 )
 
                 # labels = [f"{plate_type}"]
