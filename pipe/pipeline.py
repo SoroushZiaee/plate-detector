@@ -45,7 +45,7 @@ def inference_on_image(
                 temp_detection = sv.Detections(
                     xyxy=xyxy.reshape(-1, 4),
                     confidence=conf,
-                    class_id=class_id.astype(int),
+                    class_id=class_id.ravel().astype(int),
                 )
                 cropped_image = sv.crop(image=image, xyxy=xyxy)
                 preprocessed_image = preprocess_image(cropped_image)
