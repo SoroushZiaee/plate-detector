@@ -146,8 +146,8 @@ def inference_on_video(model_plate, model_character, model_type_of_plate, data_p
         print(f"{video_info.total_frames = }")
 
         for idx, frame in enumerate(tqdm(generator, total=video_info.total_frames)):
-            if idx == 400:
-                break
+            # if idx == 400:
+            #     break
 
             results = model_plate(frame)
             detections = sv.Detections(
