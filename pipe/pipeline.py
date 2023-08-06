@@ -36,7 +36,7 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         detections = sv.Detections.from_yolov8(results)
         detections = detections.with_nms(threshold=0.75)
         image = cv2.imread(data_path)
-
+        box_annotator = sv.BoxAnnotator()
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
             for xyxy in detections.xyxy:
                 cropped_image = sv.crop(image=image, xyxy=xyxy)
