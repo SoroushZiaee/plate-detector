@@ -1,5 +1,7 @@
 import supervision as sv
 from supervision.draw.color import ColorPalette, Color
+from supervision.draw.utils import draw_text
+from supervision.geometry.core import Point
 
 # from supervision.video.source import get_video_frames_generator
 
@@ -44,21 +46,10 @@ def inference_on_image(
                 xyxy, _, conf, class_id, _ = detection
                 cropped_image = sv.crop(image=image, xyxy=xyxy)
                 preprocessed_image = preprocess_image(cropped_image)
-                plate_type = type_of_plate_on_video(model_plate, image)
-
-                temp_detection = sv.Detections(
-                    xyxy=xyxy.reshape(-1, 4),
-                    confidence=conf.reshape(
-                        -1,
-                    ),
-                    class_id=class_id.reshape(
-                        -1,
-                    ),
-                )
-
-                labels = [f"{plate_type}"]
-                preprocessed_image = box_annotator.annotate(
-                    scene=preprocessed_image, detections=temp_detection, labels=labels
+                plate_type = type_of_plate_on_video(model_plate, preprocessed_image)
+                text_anchor = Point(x=50, y=50)
+                preprocessed_image = draw_text(
+                    preprocessed_image, text=plate_type, text_anchor=text_anchor
                 )
 
                 sink.save_image(image=preprocessed_image)
