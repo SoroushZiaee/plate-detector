@@ -39,6 +39,8 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
         box_annotator = sv.BoxAnnotator()
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
             for detection in detections:
+                print(len(detection))
+                print(detection)
                 cropped_image = sv.crop(image=image, xyxy=detection.xyxy)
                 preprocessed_image = preprocess_image(cropped_image)
                 plate_type = type_of_plate_on_video(model, image)
