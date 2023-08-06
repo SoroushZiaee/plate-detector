@@ -42,9 +42,8 @@ def inference_on_image(
         with sv.ImageSink(target_dir_path=result_path, overwrite=True) as sink:
             for detection in detections:
                 xyxy, _, conf, class_id, _ = detection
-                print(xyxy.shape)
                 temp_detection = sv.Detections(
-                    xyxy=xyxy,
+                    xyxy=xyxy.reshape(-1, 4),
                     confidence=conf,
                     class_id=class_id.astype(int),
                 )
