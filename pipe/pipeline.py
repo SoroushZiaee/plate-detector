@@ -48,7 +48,9 @@ def inference_on_image(
 
                 temp_detection = sv.Detections(
                     xyxy=xyxy.reshape(-1, 4),
-                    confidence=conf,
+                    confidence=conf.reshape(
+                        -1,
+                    ),
                     class_id=np.array(plate_type).reshape(
                         -1,
                     ),
