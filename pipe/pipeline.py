@@ -27,7 +27,9 @@ from util.utils import (
 )
 
 
-def inference_on_image(model, data_path: str, type_detection: str = "plate"):
+def inference_on_image(
+    model, data_path: str, type_detection: str = "plate", model_plate=None
+):
     if type_detection.lower() == "plate":
         result_path = os.path.join(os.getcwd(), "plates")
         os.makedirs(result_path, exist_ok=True)
@@ -42,8 +44,8 @@ def inference_on_image(model, data_path: str, type_detection: str = "plate"):
                 xyxy, _, conf, class_id, _ = detection
                 cropped_image = sv.crop(image=image, xyxy=xyxy)
                 preprocessed_image = preprocess_image(cropped_image)
-                plate_type = type_of_plate_on_video(model, image)
-                labels = [f"""{plate_type}"""]
+                plate_type = type_of_plate_on_video(model_plate, image)
+                labels = [f"{plate_type}"]
                 preprocessed_image = box_annotator.annotate(
                     scene=preprocessed_image, detections=detection, labels=labels
                 )

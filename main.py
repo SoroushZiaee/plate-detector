@@ -44,7 +44,10 @@ def run(data_path: str, model_path: str, type_detection: str):
 
     if extension in [".png", ".jpeg", ".jpg"]:
         model = load_model(model_path, type_detection)
-        inference_on_image(model, data_path, type_detection)
+        model_type_of_plate = load_model(model_path, "type")
+        inference_on_image(
+            model, data_path, type_detection, model_plate=model_type_of_plate
+        )
 
 
 def main(conf):
