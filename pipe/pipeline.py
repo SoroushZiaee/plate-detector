@@ -51,14 +51,14 @@ def inference_on_image(
                     confidence=conf.reshape(
                         -1,
                     ),
-                    class_id=np.array(plate_type).reshape(
+                    class_id=class_id.reshape(
                         -1,
                     ),
                 )
 
-                # labels = [f"{plate_type}"]
+                labels = [f"{plate_type}"]
                 preprocessed_image = box_annotator.annotate(
-                    scene=preprocessed_image, detections=temp_detection
+                    scene=preprocessed_image, detections=temp_detection, labels=labels
                 )
 
                 sink.save_image(image=preprocessed_image)
