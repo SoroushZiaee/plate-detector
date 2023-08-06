@@ -49,7 +49,10 @@ def inference_on_image(
                 plate_type = type_of_plate_on_video(model_plate, preprocessed_image)
                 text_anchor = Point(x=50, y=50)
                 preprocessed_image = draw_text(
-                    preprocessed_image, text=plate_type, text_anchor=text_anchor
+                    preprocessed_image,
+                    text=plate_type,
+                    text_anchor=text_anchor,
+                    text_color=Color.white(),
                 )
 
                 sink.save_image(image=preprocessed_image)
